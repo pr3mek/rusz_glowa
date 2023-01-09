@@ -8,3 +8,8 @@ def search4letters(phrase: str, letters: str = 'aeiou') -> set:
     """Sprawdza czy podane znaki (domyślnie samogłoski) znajdują się w podanej frazie"""
     return set(letters).intersection(set(phrase))
 
+
+def log_request(req: 'flask_request', res: str) -> None:
+    """Zapisuje logi dotyczące bieżącego żądania sieciowego, oraz wyniku wyszukiwania podanych liter"""
+    with open('vsearch.log', 'a') as log:
+        print(str(dir(req)), res, file=log)
