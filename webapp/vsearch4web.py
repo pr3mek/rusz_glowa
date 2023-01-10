@@ -1,3 +1,5 @@
+import html
+
 from flask import Flask, render_template, request, escape
 from mymodules.vsearch import search4letters, log_request
 
@@ -19,10 +21,18 @@ def do_search():
 
 
 @app.route('/viewlog')
-def view_the_log() -> str:
+def view_the_log() -> 'html':
+    contents = []
     with open('vsearch.log') as log:
-        contents = log.read()
-    return escape(contents)
+        for line in log:
+            contents.append([])
+            for item in line.split('|'):
+                contents[-1].append(escape(item))
+    titles = ('Dane z formularza', 'Adres klienta', 'Agent użytkownika', 'Wyniki')
+    return render_template('viewlog.html',
+                           the_title='Widok logu',
+                           the_row_titles=titles,
+                           the_data=contents,)
 
 
 @app.route('/')
