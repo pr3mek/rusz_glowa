@@ -1,29 +1,17 @@
 import html
 
-from flask import Flask, render_template, request, escape
+from flask import Flask, render_template, request, session
 from mymodules.vsearch import search4letters
 from DBcm import UseDatabase
 
 app = Flask(__name__)
 
+app.secret_key = 'NajbardziejTajnyKodJakiUdaloMiSieWymyslec'
+
 app.config['dbconfig'] = {'host': 's177.cyber-folks.pl',
                           'user': 'nnmyhiacdt_rusz_glowa',
                           'password': 'Pandi1992cao@',
                           'database': 'nnmyhiacdt_rusz_glowa', }
-
-# def fav_letter() -> str:
-#     with UseDatabase(app.config['dbconfig']) as cursor:
-#         _SQL = """select count(letters) as 'count', letters
-#                     from logs
-#                     group by letters
-#                     order by count desc
-#                     limit 1"""
-#         return cursor.execute(_SQL)
-
-# def count_search() -> str:
-#     with UseDatabase(app.config['dbconfig']) as cursor:
-#         _SQL = """select count(*) from logs"""
-#         return cursor.execute(_SQL)
 
 
 def log_request(req: 'flask_request', res: str) -> None:
@@ -76,6 +64,25 @@ def entry_page():
     # letters = fav_letter()
     return render_template('entry.html',
                            the_title='Witamy na naszej stronie search4letters!')
+
+
+@app.route('/login')
+def do_login() -> str:
+    session['logged_in'] = True
+    return 'Teraz jesteś zalogowany.'
+
+
+@app.route('/logout')
+def do_logout() -> str:
+    session.pop('logged_in')
+    return 'Teraz jesteś wylogowany.'
+
+
+@app.route('/status')
+def check_status() -> str:
+    if 'logged_in' in session:
+        return 'Jesteś już zalogowany'
+    return 'Nie jesteś zalogowany'
 
 
 if __name__ == '__main__':
